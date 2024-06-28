@@ -1,13 +1,36 @@
+'use client'
 import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar"
 import { SearchIcon } from "lucide-react"
 import Image from "next/image"
+import useFetchRecipes from "@/hooks/useFetchRecipes"
+import { useRecipeContext } from "@/contexts/RecipeContext"
+import { useState } from "react"
+import { RecipeCategories } from "@/types/RecipeCategories"
 
-export default function page() {
-  return(
-      <>
+export default function Page() {
+  const { recipes } = useRecipeContext();
+  useFetchRecipes()
+
+  const [filteredRecipes, setFilteredRecipes] = useState(recipes)
+  // Função para atualizar as receitas filtradas
+  const handleFilterChange = (categories: string, prepTime: number) => {
+    let filtered = recipes;
+    if (categories) {
+      filtered = filtered.filter(recipe => recipe.categories.name === categories);
+    }
+    // if (dishType) {
+    //   filtered = filtered.filter(recipe => recipe.dishType === dishType);
+    // }
+    if (prepTime) {
+      filtered = filtered.filter(recipe => recipe.prepTime === prepTime);
+    }
+    setFilteredRecipes(filtered);
+  };
+  return (
+    <>
       <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
         <div className="mb-8 md:mb-10 lg:mb-12">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-4xl md:text-5xl">
@@ -20,42 +43,7 @@ export default function page() {
         <div className="mb-8 md:mb-10 lg:mb-12">
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-4">
-              <Select>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="appetizers">Appetizers</SelectItem>
-                  <SelectItem value="entrees">Entrees</SelectItem>
-                  <SelectItem value="desserts">Desserts</SelectItem>
-                  <SelectItem value="salads">Salads</SelectItem>
-                  <SelectItem value="soups">Soups</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Dish Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="vegetarian">Vegetarian</SelectItem>
-                  <SelectItem value="vegan">Vegan</SelectItem>
-                  <SelectItem value="gluten-free">Gluten-Free</SelectItem>
-                  <SelectItem value="dairy-free">Dairy-Free</SelectItem>
-                  <SelectItem value="seafood">Seafood</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Prep Time" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="30-minutes">30 Minutes or Less</SelectItem>
-                  <SelectItem value="1-hour">1 Hour or Less</SelectItem>
-                  <SelectItem value="2-hours">2 Hours or Less</SelectItem>
-                  <SelectItem value="3-hours">3 Hours or Less</SelectItem>
-                  <SelectItem value="4-hours">4 Hours or Less</SelectItem>
-                </SelectContent>
-              </Select>
+              
             </div>
             <Button size="sm">
               <SearchIcon className="mr-2 h-4 w-4" />
@@ -63,186 +51,35 @@ export default function page() {
             </Button>
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          <div className="group relative overflow-hidden rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl">
-            <Link className="absolute inset-0 z-10" href="#">
-              <span className="sr-only">View Recipe</span>
-            </Link>
-            <Image
-              alt="Gourmet Salad"
-              className="h-64 w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-105"
-              height={400}
-              src="/place.png"
-              style={{
-                aspectRatio: "600/400",
-                objectFit: "cover",
-              }}
-              width={600}
-            />
-            <div className="bg-white p-4 dark:bg-gray-950">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Gourmet Salad</h3>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                A fresh and flavorful salad with a variety of seasonal ingredients.
-              </p>
+        {recipes.map((recipe) => (
+          <div key={recipe.id} className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div className="group relative overflow-hidden rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl">
+              <Link className="absolute inset-0 z-10" href="#">
+                <span className="sr-only">Ver Receita</span>
+              </Link>
+              <Image
+                alt={recipe.description}
+                className="h-64 w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-105"
+                height={400}
+                src={recipe.imageUrl}
+                style={{
+                  aspectRatio: "600/400",
+                  objectFit: "cover",
+                }}
+                width={600}
+              />
+              <div className="bg-white p-4 dark:bg-gray-950">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{recipe.title}</h3>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">
+                  {recipe.description}
+                </p>
+              </div>
             </div>
+
           </div>
-          <div className="group relative overflow-hidden rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl">
-            <Link className="absolute inset-0 z-10" href="#">
-              <span className="sr-only">View Recipe</span>
-            </Link>
-            <Image
-              alt="Gourmet Pasta"
-              className="h-64 w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-105"
-              height={400}
-              src="/place.png"
-              style={{
-                aspectRatio: "600/400",
-                objectFit: "cover",
-              }}
-              width={600}
-            />
-            <div className="bg-white p-4 dark:bg-gray-950">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Gourmet Pasta</h3>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                A delectable pasta dish with a rich, creamy sauce and fresh ingredients.
-              </p>
-            </div>
-          </div>
-          <div className="group relative overflow-hidden rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl">
-            <Link className="absolute inset-0 z-10" href="#">
-              <span className="sr-only">View Recipe</span>
-            </Link>
-            <Image
-              alt="Gourmet Dessert"
-              className="h-64 w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-105"
-              height={400}
-              src="/place.png"
-              style={{
-                aspectRatio: "600/400",
-                objectFit: "cover",
-              }}
-              width={600}
-            />
-            <div className="bg-white p-4 dark:bg-gray-950">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Gourmet Dessert</h3>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                A decadent and indulgent dessert that will satisfy any sweet tooth.
-              </p>
-            </div>
-          </div>
-          <div className="group relative overflow-hidden rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl">
-            <Link className="absolute inset-0 z-10" href="#">
-              <span className="sr-only">View Recipe</span>
-            </Link>
-            <Image
-              alt="Gourmet Seafood"
-              className="h-64 w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-105"
-              height={400}
-              src="/place.png"
-              style={{
-                aspectRatio: "600/400",
-                objectFit: "cover",
-              }}
-              width={600}
-            />
-            <div className="bg-white p-4 dark:bg-gray-950">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Gourmet Seafood</h3>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                A delightful seafood dish with a unique blend of flavors and textures.
-              </p>
-            </div>
-          </div>
-          <div className="group relative overflow-hidden rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl">
-            <Link className="absolute inset-0 z-10" href="#">
-              <span className="sr-only">View Recipe</span>
-            </Link>
-            <Image
-              alt="Gourmet Appetizer"
-              className="h-64 w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-105"
-              height={400}
-              src="/place.png"
-              style={{
-                aspectRatio: "600/400",
-                objectFit: "cover",
-              }}
-              width={600}
-            />
-            <div className="bg-white p-4 dark:bg-gray-950">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Gourmet Appetizer</h3>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                A delectable appetizer that will tantalize your taste buds.
-              </p>
-            </div>
-          </div>
-          <div className="group relative overflow-hidden rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl">
-            <Link className="absolute inset-0 z-10" href="#">
-              <span className="sr-only">View Recipe</span>
-            </Link>
-            <Image
-              alt="Gourmet Entree"
-              className="h-64 w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-105"
-              height={400}
-              src="/place.png"
-              style={{
-                aspectRatio: "600/400",
-                objectFit: "cover",
-              }}
-              width={600}
-            />
-            <div className="bg-white p-4 dark:bg-gray-950">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Gourmet Entree</h3>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                A delicious and satisfying main dish that will impress your guests.
-              </p>
-            </div>
-          </div>
-          <div className="group relative overflow-hidden rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl">
-            <Link className="absolute inset-0 z-10" href="#">
-              <span className="sr-only">View Recipe</span>
-            </Link>
-            <Image
-              alt="Gourmet Soup"
-              className="h-64 w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-105"
-              height={400}
-              src="/place.png"
-              style={{
-                aspectRatio: "600/400",
-                objectFit: "cover",
-              }}
-              width={600}
-            />
-            <div className="bg-white p-4 dark:bg-gray-950">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Gourmet Soup</h3>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                A warm and comforting soup that will nourish your soul.
-              </p>
-            </div>
-          </div>
-          <div className="group relative overflow-hidden rounded-lg shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl">
-            <Link className="absolute inset-0 z-10" href="#">
-              <span className="sr-only">View Recipe</span>
-            </Link>
-            <Image
-              alt="Gourmet Dessert"
-              className="h-64 w-full object-cover transition-all duration-300 ease-in-out group-hover:scale-105"
-              height={400}
-              src="/place.png"
-              style={{
-                aspectRatio: "600/400",
-                objectFit: "cover",
-              }}
-              width={600}
-            />
-            <div className="bg-white p-4 dark:bg-gray-950">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">Gourmet Dessert</h3>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                A decadent and indulgent dessert that will satisfy any sweet tooth.
-              </p>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
-      <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
+      {/* <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
         <div className="mb-8 md:mb-10 lg:mb-12">
           <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl md:text-4xl">
             Gourmet Delight: Chocolate Lava Cake
@@ -317,7 +154,7 @@ export default function page() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </>
-)
+  )
 }

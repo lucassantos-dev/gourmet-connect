@@ -1,22 +1,27 @@
 'use client'
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { Sheet, SheetTrigger, SheetContent, SheetClose } from "@/components/ui/sheet";
-import { MenuIcon } from "lucide-react";
-import { Button } from "../ui/button";
+import { useState } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetClose,
+} from '@/components/ui/sheet'
+import { MenuIcon } from 'lucide-react'
+import { Button } from '../ui/button'
 
 export default function NavBar() {
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+    setMenuOpen(!menuOpen)
+  }
 
   // Função para fechar o menu
   const closeMenu = () => {
-    setMenuOpen(false);
-  };
+    setMenuOpen(false)
+  }
 
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-sm dark:bg-gray-950">
@@ -58,10 +63,7 @@ export default function NavBar() {
                 <span className="sr-only">Toggle navigation menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent
-              className="bg-slate-50 p-6 shadow-2xl"
-              side="left"
-            >
+            <SheetContent className="bg-slate-50 p-6 shadow-2xl" side="left">
               <nav className="grid mt-4 gap-4 content-center">
                 <SheetClose asChild>
                   <Link
@@ -73,7 +75,6 @@ export default function NavBar() {
                   </Link>
                 </SheetClose>
                 <SheetClose asChild>
-
                   <Link
                     className="flex bg-white shadow-sm items-center gap-3 rounded-md py-2 px-3 text-sm font-medium text-black transition-colors hover:bg-gray-800 hover:text-white"
                     href="/meal-generator"
@@ -83,7 +84,6 @@ export default function NavBar() {
                   </Link>
                 </SheetClose>
                 <SheetClose asChild>
-
                   <Link
                     className="flex bg-white shadow-sm items-center gap-3 rounded-md py-2 px-3 text-sm font-medium text-black transition-colors hover:bg-gray-800 hover:text-white"
                     href="/ingredients-glossary"
@@ -106,5 +106,5 @@ export default function NavBar() {
         </div>
       </div>
     </nav>
-  );
+  )
 }

@@ -13,12 +13,12 @@ export default function RecipePage({ params }: { params: { id: string } }) {
     <div className="container mx-auto px-4 py-12">
       <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
         <div className="mb-8 md:mb-10 lg:mb-12">
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl md:text-4xl">
-            Gourmet Delight: Chocolate Lava Cake
+          <h2 className="text-2xl text-center pb-4 font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl md:text-4xl">
+            {recipe.title}
           </h2>
         </div>
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          <div>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 ">
+          <div className="md:ml-10">
             <Image
               alt={recipe.description}
               className="h-full w-full rounded-lg object-cover"
@@ -31,7 +31,7 @@ export default function RecipePage({ params }: { params: { id: string } }) {
               width={800}
             />
           </div>
-          <div className="col-span-1 md:col-span-2 lg:col-span-2">
+          <div className="ml-10 col-span-2 md:col-span-2 lg:col-span-2">
             <div className="mb-6">
               <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 sm:text-2xl">
                 Ingredients

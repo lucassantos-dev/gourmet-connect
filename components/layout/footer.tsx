@@ -10,16 +10,16 @@ export default function Footer() {
           <span className="text-lg">Gourmet Connect</span>
         </div>
         <nav className="flex gap-4 text-sm">
-          <Link className="hover:text-green-500" href="#">
+          <Link className="hover:text-green-500"  href="/recipes">
             Receitas
           </Link>
-          <Link className="hover:text-green-500" href="#">
+          {/* <Link className="hover:text-green-500" href="#">
             Restaurantes
-          </Link>
-          <Link className="hover:text-green-500" href="#">
+          </Link> */}
+          {/* <Link className="hover:text-green-500" href="#">
             Planejamento de refeições
-          </Link>
-          <Link className="hover:text-green-500" href="#">
+          </Link> */}
+          <Link className="hover:text-green-500" href="/ingredients-glossary">
             Glossário de Ingredientes
           </Link>
         </nav>

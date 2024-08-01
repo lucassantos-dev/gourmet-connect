@@ -1,12 +1,14 @@
 'use client'
 import { Card, CardContent } from '../../ui/card'
 import Image from 'next/image'
-// import useFetchRecipes from '@/hooks/useFetchRecipes'
+import useFetchRecipes from '@/hooks/useFetchRecipes'
 import { useRecipeContext } from '@/contexts/RecipeContext'
+import Link from 'next/link'
 
 export default function SectionRecipes() {
   const { recipes } = useRecipeContext()
   const limitedRecipes = recipes.slice(0, 4)
+  useFetchRecipes()
   // const { error, loading } = useFetchRecipes()
   return (
     <main>
@@ -23,6 +25,9 @@ export default function SectionRecipes() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {limitedRecipes.map((recipe) => (
               <div key={recipe.id}>
+                 <Link
+                  href={'/recipes/' + recipe.id}
+                >
                 <Card className="transition-transform duration-300 ease-in-out hover:-translate-y-2">
                   <Image
                     alt="Dish 1"
@@ -36,12 +41,13 @@ export default function SectionRecipes() {
                     width={300}
                   />
                   <CardContent className="space-y-2 p-4">
-                    <h3 className="text-lg font-semibold">{recipe.title}</h3>
+                    <h3 className="text-lg font-semibold">{recipe.name}</h3>
                     <p className="text-gray-500 dark:text-gray-400">
                       {recipe.description}
                     </p>
                   </CardContent>
                 </Card>
+                </Link>
               </div>
             ))}
           </div>

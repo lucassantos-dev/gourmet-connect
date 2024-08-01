@@ -37,12 +37,12 @@ export default function NavBar() {
           >
             Receitas
           </Link>
-          <Link
+          {/* <Link
             className="text-sm font-medium hover:text-green-500"
             href="/meal-generator"
           >
             Planejamento de Refeições
-          </Link>
+          </Link> */}
           <Link
             className="text-sm font-medium hover:text-green-500"
             href="/ingredients-glossary"

@@ -10,6 +10,7 @@ import { useRecipeCategoriesContext } from '@/contexts/RecipeCategory'
 import useFetchRecipesCategories from '@/hooks/useFetchRecipesCategories'
 import { Recipe } from '@/types/types'
 import { useEffect, useState } from 'react'
+import InputFilter from '@/components/common/InputFilter'
 
 export default function Page() {
   const { recipes } = useRecipeContext()
@@ -17,25 +18,45 @@ export default function Page() {
   const { recipeCategories } = useRecipeCategoriesContext()
   useFetchRecipesCategories()
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([])
+  const [searchTerm, setSearchTerm] = useState<string>('')
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   useEffect(() => {
+    let filtered = recipes
+
+  if (selectedCategory && selectedCategory !== 'todos') {
+    filtered = filtered.filter((recipe) =>
+      recipe.categories.some(
+        (category) => category.name.toLowerCase() === selectedCategory,
+      ),
+    )
+  }
+
+  if (searchTerm) {
+    filtered = filtered.filter((recipe) =>
+      recipe.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  }
     setFilteredRecipes(recipes)
-  }, [recipes])
+  }, [recipes, selectedCategory, searchTerm])
 
   const handleFilterChange = () => {
     let filtered = recipes
-    console.log(filtered)
-    console.log(selectedCategory)
+  
     if (selectedCategory && selectedCategory !== 'todos') {
       filtered = filtered.filter((recipe) =>
         recipe.categories.some(
-          (category) => category.name.toLocaleLowerCase() === selectedCategory,
+          (category) => category.name.toLowerCase() === selectedCategory,
         ),
       )
-    } else if (selectedCategory === 'Todos') {
-      filtered = recipes
     }
+  
+    if (searchTerm) {
+      filtered = filtered.filter((recipe) =>
+        recipe.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    }
+  
     setFilteredRecipes(filtered)
   }
   return (
@@ -58,6 +79,11 @@ export default function Page() {
                 options={recipeCategories}
                 onChange={(value) => setSelectedCategory(value)}
               />
+              <InputFilter
+              placeholder="Search by name"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
             </div>
             <Button size="sm" onClick={handleFilterChange}>
               <SearchIcon className="mr-2 h-4 w-4" />
@@ -88,7 +114,7 @@ export default function Page() {
                 />
                 <div className="bg-white p-4 dark:bg-gray-950">
                   <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                    {recipe.title}
+                    {recipe.name}
                   </h3>
                   <p className="mt-2 text-gray-600 dark:text-gray-400">
                     {recipe.description}

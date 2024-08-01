@@ -1,22 +1,22 @@
 'use client'
-import { useRecipeContext } from '@/contexts/RecipeContext'
+import { useIngredientContext } from '@/contexts/IngredientsContext'
 import { useEffect, useState } from 'react'
 
-const useFetchRecipes = () => {
-  const { setRecipes } = useRecipeContext()
+const useFetchIngredient = () => {
+  const { setIngredients } = useIngredientContext()
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   useEffect(() => {
-    const fetchRecipes = async () => {
+    const fetchIngredient = async () => {
       try {
         const response = await fetch(
-          process.env.NEXT_PUBLIC_API_URL + '/recipes',
+          process.env.NEXT_PUBLIC_API_URL + '/ingredients',
         )
         if (!response.ok) {
-          throw new Error('Erro ao buscar dados das receitas')
+          throw new Error('Erro ao buscar dados dos igredientes')
         }
         const data = await response.json()
-        setRecipes(data)
+        setIngredients(data)
       } catch (error) {
         console.log('Error ao buscar receitas:', error)
         setError('Erro ao buscar receitas')
@@ -24,8 +24,8 @@ const useFetchRecipes = () => {
         setLoading(false)
       }
     }
-    fetchRecipes()
-  }, [setRecipes])
+    fetchIngredient()
+  }, [setIngredients])
   return { loading, error }
 }
-export default useFetchRecipes
+export default useFetchIngredient

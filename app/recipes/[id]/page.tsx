@@ -2,23 +2,31 @@
 import Image from 'next/image'
 import { Recipe } from '@/types/types'
 import { GetRecipeById } from '@/hooks/getRecipeById'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-
+import { useRouter } from 'next/navigation'
+import { ArrowLeftIcon } from 'lucide-react'
 export default function RecipePage({ params }: { params: { id: string } }) {
+  const router = useRouter()
   const recipe: Recipe | undefined = GetRecipeById(params.id as string)
+
   if (!recipe) {
     return <div>Carregando...</div>
   }
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
+    <div className="container mx-auto px-4 py-3">
+        <button
+      onClick={() => router.back()}
+      className="flex items-center justify-center w-16 h-16 text-black hover:cursor-pointer focus:outline-none  transition-transform transform hover:scale-110 active:scale-95"
+    >
+      <ArrowLeftIcon className="w-8 h-8" />
+    </button>
+      <div className="container mx-auto px-4 py-3 ">
         <div className="mb-8 md:mb-10 lg:mb-12">
           <h2 className="text-2xl text-center pb-4 font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl md:text-4xl">
-            {recipe.title}
-          </h2>
+            {recipe.name}
+          </h2> 
         </div>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 ">
-          <div className="md:ml-10">
+          <div className="md:ml-10 ">
             <Image
               alt={recipe.description}
               className="h-full w-full rounded-lg object-cover"
@@ -37,21 +45,19 @@ export default function RecipePage({ params }: { params: { id: string } }) {
                 Ingredients
               </h3>
               <ul className="mt-4 space-y-2 text-gray-600 dark:text-gray-400">
-                <li>- 4 ounces bittersweet chocolate, chopped</li>
-                <li>- 1/2 cup unsalted butter</li>
-                <li>- 1/4 cup granulated sugar</li>
-                <li>- 2 large eggs</li>
-                <li>- 2 large egg yolks</li>
-                <li>- 2 tablespoons all-purpose flour</li>
-                <li>- Pinch of salt</li>
-                <li>- Powdered sugar, for dusting</li>
+                {recipe.recipeIngredients.map((recipeIngredient, index) => (
+                  
+                  <li key={index}>
+                    {recipeIngredient.quantity} {recipeIngredient.ingredient.unit} - {recipeIngredient.ingredient.name}
+                  </li>
+                ))}
               </ul>
             </div>
             <div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 sm:text-2xl">
                 Instructions
               </h3>
-              <ol className="mt-4 space-y-2 text-gray-600 dark:text-gray-400">
+              <ol className="mt-4 space-y-2 text-gray-600 dark:text-gray-400 ">
                 {recipe.instructions.map((instruction, index) => (
                   <li key={index}>
                     {index + 1}. {instruction}
@@ -61,7 +67,7 @@ export default function RecipePage({ params }: { params: { id: string } }) {
             </div>
           </div>
         </div>
-        <div className="mt-12 md:mt-16 lg:mt-20">
+        {/* <div className="mt-12 md:mt-16 lg:mt-20">
           <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 sm:text-2xl">
             Reviews
           </h3>
@@ -80,7 +86,7 @@ export default function RecipePage({ params }: { params: { id: string } }) {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

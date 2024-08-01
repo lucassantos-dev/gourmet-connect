@@ -1,8 +1,66 @@
+'use client'
+import FilterSelect from "@/components/common/FilterSelect";
+import InputFilter from "@/components/common/InputFilter";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useIngredientCategoriesContext } from "@/contexts/IngredientCategoryContext";
+import { useIngredientContext } from "@/contexts/IngredientsContext";
+import useFetcherIgredients from '@/hooks/useFetcherIgredients'
+import useFetchIngredientCategories from "@/hooks/useFetchIngredientCategories";
+import { Ingredient } from "@/types/types";
+import { SearchIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 
 export default function page(){
+  const {ingredients} = useIngredientContext()
+   useFetcherIgredients()
+   const { ingredientCategories } = useIngredientCategoriesContext()
+   useFetchIngredientCategories()
+   const [filteredIngredient, setFilteredIngredient] = useState<Ingredient[]>([])
+   const [searchTerm, setSearchTerm] = useState<string>('')
+ 
+   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+   useEffect(() => {
+     let filtered = ingredients
+ 
+   if (selectedCategory && selectedCategory !== 'todos') {
+     filtered = filtered.filter((ingredient) =>
+      ingredient.categories.some(
+         (category) => category.name.toLowerCase() === selectedCategory,
+       ),
+     )
+   }
+ 
+   if (searchTerm) {
+     filtered = filtered.filter((recipe) =>
+       recipe.name.toLowerCase().includes(searchTerm.toLowerCase())
+     )
+   }
+     setFilteredIngredient(ingredients)
+   }, [ingredients, selectedCategory, searchTerm])
+ 
+   const handleFilterChange = () => {
+     let filtered = ingredients
+   
+     if (selectedCategory && selectedCategory !== 'todos') {
+       filtered = filtered.filter((ingredient) =>
+        ingredient.categories.some(
+           (category) => category.name.toLowerCase() === selectedCategory,
+         ),
+       )
+     }
+   
+     if (searchTerm) {
+       filtered = filtered.filter((recipe) =>
+         recipe.name.toLowerCase().includes(searchTerm.toLowerCase())
+       )
+     }
+   
+     setFilteredIngredient(filtered)
+   }
   return(
     <main className="w-full max-w-6xl mx-auto px-4 md:px-6 py-12 md:py-16">
       <div className="flex flex-col md:flex-row items-center justify-between mb-8">
@@ -10,17 +68,36 @@ export default function page(){
           <h1 className="text-3xl md:text-4xl font-bold">Ingredients Glossary</h1>
           <p className="text-gray-500 dark:text-gray-400">Explore our comprehensive guide to culinary ingredients.</p>
         </div>
-        <div className="w-full md:w-auto mt-4 md:mt-0">
-          <Input className="w-full md:w-[300px]" placeholder="Search ingredients..." type="search" />
+        <div className="mb-8 md:mb-10 lg:mb-12">
+          <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-wrap items-center gap-4">
+              <FilterSelect
+                placeholder="Categorias"
+                options={ingredientCategories}
+                onChange={(value) => setSelectedCategory(value)}
+              />
+              <InputFilter
+              placeholder="Search by name"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            </div>
+            <Button size="sm" onClick={handleFilterChange}>
+              <SearchIcon className="mr-2 h-4 w-4" />
+              Search Recipes
+            </Button>
+          </div>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-gray-950 rounded-lg shadow-lg overflow-hidden">
+        {filteredIngredient.map((ingredient:Ingredient)=>(
+            <Link href={'/ingredients-glossary/' + ingredient.id}>
+          <div key={ingredient.id} className="bg-white dark:bg-gray-950 rounded-lg shadow-lg overflow-hidden">
           <Image
             alt="Ingredient Image"
             className="w-full h-48 object-cover"
             height={300}
-            src="/place.png"
+            src={ingredient.imageUrl}
             style={{
               aspectRatio: "400/300",
               objectFit: "cover",
@@ -28,231 +105,42 @@ export default function page(){
             width={400}
           />
           <div className="p-6 space-y-4">
-            <h2 className="text-xl font-bold">Avocado</h2>
+            <h2 className="text-xl font-bold">{ingredient.name}</h2>
             <p className="text-gray-500 dark:text-gray-400">
-              Avocados are a nutrient-dense fruit that originated in Mexico. They are known for their creamy texture and
-              rich, buttery flavor.
+             {ingredient.description}
             </p>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <h3 className="text-sm font-medium mb-1">Origin</h3>
-                <p className="text-gray-500 dark:text-gray-400">Mexico</p>
+                <p className="text-gray-500 dark:text-gray-400">{ingredient.origin.name}</p>
               </div>
               <div>
                 <h3 className="text-sm font-medium mb-1">Culinary Uses</h3>
-                <p className="text-gray-500 dark:text-gray-400">Guacamole, salads, sandwiches, dips</p>
+                <p className="text-gray-500 dark:text-gray-400">
+                  {ingredient.recipes.map((recipe)=>(
+                   <span key={recipe.id}>{recipe.name}</span>
+                ))}</p>
               </div>
               <div>
                 <h3 className="text-sm font-medium mb-1">Substitutes</h3>
-                <p className="text-gray-500 dark:text-gray-400">Butter, olive oil, tahini</p>
+                <p className="text-gray-500 dark:text-gray-400">
+                {ingredient.substitutes.map((ingre:Ingredient)=>(
+                  <span key={ingre.id}>{ingre.name}</span>
+                ))}
+                </p>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium mb-1">Categoria</h3>
+                <p className="text-gray-500 dark:text-gray-400">
+                   {ingredient.categories.map((category) => category.name).join(', ')}
+                </p>
+
               </div>
             </div>
           </div>
         </div>
-        <div className="bg-white dark:bg-gray-950 rounded-lg shadow-lg overflow-hidden">
-          <Image
-            alt="Ingredient Image"
-            className="w-full h-48 object-cover"
-            height={300}
-            src="/place.png"
-            style={{
-              aspectRatio: "400/300",
-              objectFit: "cover",
-            }}
-            width={400}
-          />
-          <div className="p-6 space-y-4">
-            <h2 className="text-xl font-bold">Basil</h2>
-            <p className="text-gray-500 dark:text-gray-400">
-              Basil is an aromatic herb native to Southeast Asia. It has a sweet, slightly peppery flavor and is
-              commonly used in Italian and Thai cuisines.
-            </p>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-sm font-medium mb-1">Origin</h3>
-                <p className="text-gray-500 dark:text-gray-400">Southeast Asia</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">Culinary Uses</h3>
-                <p className="text-gray-500 dark:text-gray-400">Pesto, pasta dishes, salads, pizza</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">Substitutes</h3>
-                <p className="text-gray-500 dark:text-gray-400">Parsley, cilantro, oregano</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-950 rounded-lg shadow-lg overflow-hidden">
-          <Image
-            alt="Ingredient Image"
-            className="w-full h-48 object-cover"
-            height={300}
-            src="/place.png"
-            style={{
-              aspectRatio: "400/300",
-              objectFit: "cover",
-            }}
-            width={400}
-          />
-          <div className="p-6 space-y-4">
-            <h2 className="text-xl font-bold">Cinnamon</h2>
-            <p className="text-gray-500 dark:text-gray-400">
-              Cinnamon is a spice derived from the inner bark of several tree species native to Southeast Asia. It has a
-              warm, sweet, and slightly woody flavor.
-            </p>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-sm font-medium mb-1">Origin</h3>
-                <p className="text-gray-500 dark:text-gray-400">Southeast Asia</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">Culinary Uses</h3>
-                <p className="text-gray-500 dark:text-gray-400">Baked goods, curries, hot beverages, desserts</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">Substitutes</h3>
-                <p className="text-gray-500 dark:text-gray-400">Nutmeg, allspice, ginger</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-950 rounded-lg shadow-lg overflow-hidden">
-          <Image
-            alt="Ingredient Image"
-            className="w-full h-48 object-cover"
-            height={300}
-            src="/place.png"
-            style={{
-              aspectRatio: "400/300",
-              objectFit: "cover",
-            }}
-            width={400}
-          />
-          <div className="p-6 space-y-4">
-            <h2 className="text-xl font-bold">Garlic</h2>
-            <p className="text-gray-500 dark:text-gray-400">
-              Garlic is a pungent bulb that is a staple in many cuisines around the world. It has a strong, savory
-              flavor and is known for its health benefits.
-            </p>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-sm font-medium mb-1">Origin</h3>
-                <p className="text-gray-500 dark:text-gray-400">Central Asia</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">Culinary Uses</h3>
-                <p className="text-gray-500 dark:text-gray-400">Sauces, marinades, roasted dishes, soups</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">Substitutes</h3>
-                <p className="text-gray-500 dark:text-gray-400">Onion, shallot, garlic powder</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-950 rounded-lg shadow-lg overflow-hidden">
-          <Image
-            alt="Ingredient Image"
-            className="w-full h-48 object-cover"
-            height={300}
-            src="/place.png"
-            style={{
-              aspectRatio: "400/300",
-              objectFit: "cover",
-            }}
-            width={400}
-          />
-          <div className="p-6 space-y-4">
-            <h2 className="text-xl font-bold">Honey</h2>
-            <p className="text-gray-500 dark:text-gray-400">
-              Honey is a sweet, viscous liquid produced by bees from the nectar of flowers. It has a variety of culinary
-              and medicinal uses.
-            </p>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-sm font-medium mb-1">Origin</h3>
-                <p className="text-gray-500 dark:text-gray-400">Global</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">Culinary Uses</h3>
-                <p className="text-gray-500 dark:text-gray-400">Baking, marinades, dressings, sweetener</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">Substitutes</h3>
-                <p className="text-gray-500 dark:text-gray-400">Maple syrup, agave nectar, molasses</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-950 rounded-lg shadow-lg overflow-hidden">
-          <Image
-            alt="Ingredient Image"
-            className="w-full h-48 object-cover"
-            height={300}
-            src="/place.png"
-            style={{
-              aspectRatio: "400/300",
-              objectFit: "cover",
-            }}
-            width={400}
-          />
-          <div className="p-6 space-y-4">
-            <h2 className="text-xl font-bold">Olive Oil</h2>
-            <p className="text-gray-500 dark:text-gray-400">
-              Olive oil is a versatile cooking oil extracted from the fruit of olive trees. It has a rich, fruity flavor
-              and is a staple in Mediterranean cuisine.
-            </p>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-sm font-medium mb-1">Origin</h3>
-                <p className="text-gray-500 dark:text-gray-400">Mediterranean region</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">Culinary Uses</h3>
-                <p className="text-gray-500 dark:text-gray-400">Salad dressings, sautéing, roasting, baking</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">Substitutes</h3>
-                <p className="text-gray-500 dark:text-gray-400">Avocado oil, grapeseed oil, coconut oil</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-gray-950 rounded-lg shadow-lg overflow-hidden">
-          <Image
-            alt="Ingredient Image"
-            className="w-full h-48 object-cover"
-            height={300}
-            src="/place.png"
-            style={{
-              aspectRatio: "400/300",
-              objectFit: "cover",
-            }}
-            width={400}
-          />
-          <div className="p-6 space-y-4">
-            <h2 className="text-xl font-bold">Turmeric</h2>
-            <p className="text-gray-500 dark:text-gray-400">
-              Turmeric is a vibrant yellow spice derived from the rhizome of a plant in the ginger family. It has a
-              warm, earthy flavor and is widely used in Indian and Middle Eastern cuisines.
-            </p>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h3 className="text-sm font-medium mb-1">Origin</h3>
-                <p className="text-gray-500 dark:text-gray-400">South Asia</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">Culinary Uses</h3>
-                <p className="text-gray-500 dark:text-gray-400">Curries, rice dishes, marinades, mustards</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium mb-1">Substitutes</h3>
-                <p className="text-gray-500 dark:text-gray-400">Saffron, paprika, ginger</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        </Link>
+        ))}
       </div>
     </main>
   )

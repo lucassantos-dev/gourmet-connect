@@ -1,17 +1,17 @@
 'use client'
-import { useRecipeCategoriesContext } from '@/contexts/RecipeCategory'
+import { useIngredientCategoriesContext } from '@/contexts/IngredientCategoryContext'
 import { useEffect, useState } from 'react'
 
-const useFetchRecipesCategories = () => {
-  const { setRecipeCategories } = useRecipeCategoriesContext()
+const useFetchIngredientCategories = () => {
+  const { setIngredientCategories } = useIngredientCategoriesContext()
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchRecipesCategory = async () => {
+    const fetchIngredientCategory = async () => {
       try {
         const response = await fetch(
-          process.env.NEXT_PUBLIC_API_URL + '/recipe_categories',
+          process.env.NEXT_PUBLIC_API_URL + '/ingredient_categories',
         )
 
         if (!response.ok) {
@@ -21,7 +21,7 @@ const useFetchRecipesCategories = () => {
         const data = await response.json()
         const allCategory = { id: 'all', name: 'Todos' }
 
-        setRecipeCategories([allCategory, ...data])
+        setIngredientCategories([allCategory, ...data])
       } catch (error) {
         console.log('Error ao buscar receitas:', error)
         setError('Erro ao buscar receitas')
@@ -29,9 +29,9 @@ const useFetchRecipesCategories = () => {
         setLoading(false)
       }
     }
-    fetchRecipesCategory()
-  }, [setRecipeCategories])
+    fetchIngredientCategory()
+  }, [setIngredientCategories])
   return { loading, error }
 }
 
-export default useFetchRecipesCategories
+export default useFetchIngredientCategories

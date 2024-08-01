@@ -21,15 +21,17 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={inter.className}>
+        <main className="flex flex-col min-h-screen">
         <header>
           <NavBar />
         </header>
-        <main>
+        <div className='flex-grow'>
           <RecipeProvider>{children}</RecipeProvider>
-        </main>
+        </div>
         <footer>
           <Footer />
         </footer>
+        </main>
       </body>
     </html>
   )

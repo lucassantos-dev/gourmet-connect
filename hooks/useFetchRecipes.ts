@@ -26,6 +26,9 @@ const useFetchRecipes = () => {
     }
     fetchRecipes()
   }, [setRecipes])
-  return { loading, error }
+  return {
+    loading,
+    error
+  }
 }
 export default useFetchRecipes

@@ -1,18 +1,16 @@
-import IngredientCategoriesProvider from '@/contexts/IngredientCategoryContext'
-import IngredientProvider from '@/contexts/IngredientsContext'
+import IngredientCategoriesProvider from "@/contexts/IngredientCategoryContext";
+import IngredientProvider from "@/contexts/IngredientsContext";
 
 export default function Layout({
-  children,
+	children,
 }: Readonly<{
-  children: React.ReactNode
+	children: React.ReactNode;
 }>) {
-  return (
-    <>
-      <IngredientCategoriesProvider>
-        <IngredientProvider>
-          {children}
-        </IngredientProvider>
-      </IngredientCategoriesProvider>
-    </>
-  )
+	return (
+		<>
+			<IngredientCategoriesProvider>
+				<IngredientProvider>{children}</IngredientProvider>
+			</IngredientCategoriesProvider>
+		</>
+	);
 }

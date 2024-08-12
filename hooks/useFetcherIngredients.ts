@@ -10,10 +10,10 @@ const useFetchIngredient = () => {
     const fetchIngredient = async () => {
       try {
         const response = await fetch(
-          process.env.NEXT_PUBLIC_API_URL + '/ingredients',
+          `${process.env.NEXT_PUBLIC_API_URL}/ingredients`,
         )
         if (!response.ok) {
-          throw new Error('Erro ao buscar dados dos igredientes')
+          throw new Error('Erro ao buscar dados dos ingredientes')
         }
         const data = await response.json()
         setIngredients(data)

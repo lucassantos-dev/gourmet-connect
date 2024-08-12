@@ -1,9 +1,9 @@
 'use client'
 import { useIngredientContext } from '@/contexts/IngredientsContext'
-import useFetchIgredients from './useFetcherIgredients'
+import useFetchIngredients from './useFetcherIngredients'
 
-export const GetIgredientsById = (id: string) => {
-  useFetchIgredients()
+export const GetIngredientsById = (id: string) => {
+  useFetchIngredients()
   const { ingredients } = useIngredientContext()
   if (!ingredients) {
     throw new Error('Recipes context not available')

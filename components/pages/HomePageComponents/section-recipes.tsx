@@ -26,7 +26,7 @@ export default function SectionRecipes() {
             {limitedRecipes.map((recipe) => (
               <div key={recipe.id}>
                  <Link
-                  href={'/recipes/' + recipe.id}
+                  href={`/recipes/${recipe.id}`}
                 >
                 <Card className="transition-transform duration-300 ease-in-out hover:-translate-y-2">
                   <Image

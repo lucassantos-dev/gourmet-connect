@@ -1,22 +1,22 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import NavBar from "@/components/layout/navbar";
-import Footer from "@/components/layout/footer";
-import RecipeProvider from "@/contexts/RecipeContext";
-// import RecipeCategoriesProvider from '@/contexts/RecipeCategory'
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "./globals.css"
+import NavBar from "@/components/layout/navbar"
+import Footer from "@/components/layout/footer"
+import RecipeProvider from "@/contexts/RecipeContext"
+import PageTransition from "@/components/PageTransition"
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
 	title: "Gourmet Connect",
 	description: "",
-};
+}
 
 export default function RootLayout({
 	children,
 }: Readonly<{
-	children: React.ReactNode;
+	children: React.ReactNode
 }>) {
 	return (
 		<html lang="pt-BR">
@@ -26,7 +26,9 @@ export default function RootLayout({
 						<NavBar />
 					</header>
 					<div className="flex-grow">
-						<RecipeProvider>{children}</RecipeProvider>
+						<PageTransition>
+							<RecipeProvider>{children}</RecipeProvider>
+						</PageTransition>
 					</div>
 					<footer>
 						<Footer />
@@ -34,5 +36,5 @@ export default function RootLayout({
 				</main>
 			</body>
 		</html>
-	);
+	)
 }

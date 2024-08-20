@@ -76,7 +76,7 @@ export default function IngredientPage({ params }: { params: { id: string } }) {
 						</div>
 					</div>
 					<div>
-						<h2 className="text-xl font-semibold">Recipes</h2>
+						{/* <h2 className="text-xl font-semibold">Recipes</h2>
 						<ul className="space-y-2">
 							{ingredient.recipes.map((recipe) => (
 								<Link
@@ -88,7 +88,7 @@ export default function IngredientPage({ params }: { params: { id: string } }) {
 									{recipe.name}
 								</Link>
 							))}
-						</ul>
+						</ul> */}
 					</div>
 				</div>
 			</div>
